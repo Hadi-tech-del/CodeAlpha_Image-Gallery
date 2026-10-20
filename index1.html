@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Image Gallery</title>
+    <style>
+        /* Base Reset & Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            padding: 20px;
+            color: #333;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        /* Filter Buttons (Bonus) */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background-color: #fff;
+            border: 2px solid #3498db;
+            color: #3498db;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background-color: #3498db;
+            color: #fff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            aspect-ratio: 4 / 3;
+            background-color: #ddd;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Smooth Hover Effects */
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .item-overlay {
+            opacity: 1;
+        }
+
+        /* Lightbox Layout */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox-content {
+            max-width: 85%;
+            max-height: 80%;
+            border-radius: 4px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+        }
+
+        /* Lightbox Navigation & UI */
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            color: #fff;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            padding: 10px 15px;
+            cursor: pointer;
+            user-select: none;
+            background: rgba(0,0,0,0.3);
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .prev-btn { left: 20px; }
+        .next-btn { right: 20px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Image Gallery</h1>
+        <!-- Filters (Bonus feature) -->
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="nature">Nature</button>
+            <button class="filter-btn" data-filter="architecture">Architecture</button>
+            <button class="filter-btn" data-filter="animals">Animals</button>
+        </div>
+    </header>
+
+    <!-- Gallery Grid -->
+    <main class="gallery-grid" id="gallery">
+        <div class="gallery-item" data-category="nature">
+            <img src="gallery/Forest Trail.jpg" alt="Forest Trail">
+            <div class="item-overlay"><h3>Forest Trail</h3></div>
+        </div>
+        <div class="gallery-item" data-category="architecture">
+            <img src="gallery/modern building.jpg" alt="Modern Building">
+            <div class="item-overlay"><h3>Modern Building</h3></div>
+        </div>
+        <div class="gallery-item" data-category="animals">
+            <img src="gallery/sleeping pug.jpg" alt="Sleeping Pug">
+            <div class="item-overlay"><h3>Sleeping Pug</h3></div>
+        </div>
+        <div class="gallery-item" data-category="nature">
+            <img src="gallery/peaceful lakes.jpg" alt="Peaceful Lake">
+            <div class="item-overlay"><h3>Peaceful Lake</h3></div>
+        </div>
+        <div class="gallery-item" data-category="architecture">
+            <img src="gallery/city bridge.jpg" alt="City Bridge">
+            <div class="item-overlay"><h3>City Bridge</h3></div>
+        </div>
+        <div class="gallery-item" data-category="animals">
+            <img src="gallery/black puppy.jpg" alt="Black Puppy">
+            <div class="item-overlay"><h3>Black Puppy</h3></div>
+        </div>
+    </main>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <span class="close-btn" id="closeBtn">&times;</span>
+        <span class="nav-btn prev-btn" id="prevBtn">&#10094;</span>
+        <img class="lightbox-content" id="lightboxImg" src="" alt="">
+        <span class="nav-btn next-btn" id="nextBtn">&#10095;</span>
+    </div>
+
+    <script>
+        // DOM Elements
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const closeBtn = document.getElementById('closeBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        let activeItems = [...galleryItems]; // Tracks currently filtered/visible items
+        let currentIndex = 0;
+
+        // --- Lightbox Logic ---
+        function openLightbox(index) {
+            currentIndex = index;
+            lightboxImg.src = activeItems[currentIndex].querySelector('img').src;
+            lightbox.classList.add('active');
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+        }
+
+        function showNext() {
+            currentIndex = (currentIndex + 1) % activeItems.length;
+            lightboxImg.src = activeItems[currentIndex].querySelector('img').src;
+        }
+
+        function showPrev() {
+            currentIndex = (currentIndex - 1 + activeItems.length) % activeItems.length;
+            lightboxImg.src = activeItems[currentIndex].querySelector('img').src;
+        }
+
+        // Attach Lightbox Events to active items
+        function updateGalleryClickEvents() {
+            activeItems.forEach((item, index) => {
+                item.onclick = () => openLightbox(index);
+            });
+        }
+
+        // --- Filter Logic ---
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Toggle active class on buttons
+                document.querySelector('.filter-btn.active').classList.remove('active');
+                btn.classList.add('active');
+
+                const filterValue = btn.getAttribute('data-filter');
+
+                // Filter items visibility
+                galleryItems.forEach(item => {
+                    if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Update active list used for lightbox navigation
+                activeItems = [...galleryItems].filter(item => 
+                    filterValue === 'all' || item.getAttribute('data-category') === filterValue
+                );
+
+                updateGalleryClickEvents();
+            });
+        });
+
+        // Event Listeners
+        closeBtn.addEventListener('click', closeLightbox);
+        nextBtn.addEventListener('click', showNext);
+        prevBtn.addEventListener('click', showPrev);
+
+        // Close lightbox when clicking outside the image
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+
+        // Initialize events on page load
+        updateGalleryClickEvents();
+    </script>
+</body>
+</html>
